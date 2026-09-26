@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "name": "traffic_sign",
+    "color": "#F9A825",
+    "type": "rectangle",
+    "attributes": [
+      {
+        "name": "sign_family",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "__undefined__",
+        "values": [
+          "__undefined__",
+          "warning",
+          "regulatory",
+          "prohibitory",
+          "mandatory",
+          "priority",
+          "information",
+          "direction",
+          "temporary",
+          "supplementary",
+          "other",
+          "unknown"
+        ]
+      },
+      {
+        "name": "sign_code",
+        "mutable": false,
+        "input_type": "text",
+        "default_value": "__undefined__",
+        "values": ["__undefined__"]
+      },
+      {
+        "name": "visibility",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "__undefined__",
+        "values": ["__undefined__", "full", "partial", "low", "severely_occluded"]
+      },
+      {
+        "name": "identification",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "__undefined__",
+        "values": ["__undefined__", "known", "unknown"]
+      },
+      {
+        "name": "review_status",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "__undefined__",
+        "values": ["__undefined__", "normal", "escalate"]
+      }
+    ]
+  },
+  {
+    "name": "image_status",
+    "color": "#8E24AA",
+    "type": "tag",
+    "attributes": [
+      {
+        "name": "status",
+        "mutable": false,
+        "input_type": "select",
+        "default_value": "__undefined__",
+        "values": ["__undefined__", "contains_sign", "no_sign", "uncertain"]
+      }
+    ]
+  }
+]
+

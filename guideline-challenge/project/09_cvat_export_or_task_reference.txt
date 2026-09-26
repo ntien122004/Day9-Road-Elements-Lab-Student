@@ -1,8 +1,29 @@
-CVAT task reference — thay mọi placeholder mới là xong.
+CVAT task reference
 
-CVAT version: TODO
-Task calibration (tên, id): TODO
-Task bản cuối theo guideline v3 (tên, id) hoặc lý do không có: TODO
-File export đã nộp (đường dẫn trong repo): TODO
-Guideline version dán trong Guide của task: TODO
-Ghi chú cho người tiếp nhận: TODO
+CVAT version:
+- Local CVAT checked at `http://localhost:8080`: 2.75.1.
+- Version used by teammates on their own machines is not recorded in the ZIP exports.
+
+Calibration tasks:
+- Calibration was run independently by five annotators using the same 8-image calibration split.
+- Task names and CVAT IDs are not recoverable from the submitted exports; record them from each annotator's CVAT Tasks page if required.
+- Guideline used for calibration: v1, preserved as `project/02_guideline_v1_calibration.md`.
+
+Final task under guideline v3:
+- Not created yet. Current gate status shows team details are still missing at G1, gold is not frozen at G4, and there is no peer export at G5. The active guideline is v2, so a v3 task should be created only after blind-test revision.
+
+Calibration exports in this repository:
+- `project/06_calibration_exports/dangvannam.zip`
+- `project/06_calibration_exports/dohoangminh.zip`
+- `project/06_calibration_exports/NguyenChiBang_Lab9.zip`
+- `project/06_calibration_exports/nguyendonquoctuan_lab09.zip`
+- `project/06_calibration_exports/nguyenviettien.zip`
+
+Related generated evidence:
+- `project/06_calibration_measure.csv`
+- `project/06_calibration_report.csv`
+
+Notes for the recipient:
+- Exports contain CVAT annotations but do not identify a task name/ID in the metadata checked.
+- Local CVAT version is verified; do not assume the other annotators used the same version unless they confirm it.
+- Before final v3 task setup, freeze the reviewed blind gold once, then use the frozen labels and v3 guideline consistently.

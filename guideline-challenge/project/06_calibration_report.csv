@@ -1,1 +1,4 @@
 sample_id,item,values_by_annotator,diagnosis,action,rule_change
+GTS02,traffic_sign count,dangvannam=6; dohoangminh=11; nguyenchibang=5; nguyendonquoctuan=0; nguyenviettien=5,guideline_gap,revise_rule,Clarify that each distinct visible sign face is one instance and specify the minimum visual evidence required to count small background signs
+GTS15,traffic_sign count,dangvannam=1; dohoangminh=9; nguyenchibang=1; nguyendonquoctuan=0; nguyenviettien=5,guideline_gap,revise_rule,Clarify inclusion and exclusion for partially occluded or visually uncertain sign-like objects and require unknown or escalate instead of guessing
+GTS24,traffic_sign count,dangvannam=3; dohoangminh=5; nguyenchibang=1; nguyendonquoctuan=0; nguyenviettien=4,guideline_gap,revise_rule,Add a worked example showing how to count separate signs on one support and how to treat distant or low-visibility signs

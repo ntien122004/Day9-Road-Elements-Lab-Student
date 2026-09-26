@@ -1,1 +1,19 @@
 sample_id,split,tags,reason
+GTS01,example,normal,clear and readable sign; best baseline example
+GTS05,example,normal,clean sign and simple background; easy teaching case
+GTS09,example,normal,straightforward sign with strong visibility; good example
+GTS10,example,normal,clear sign in a manageable scene; fits the example set
+GTS14,example,normal,readable and visually stable; good reference image
+GTS02,calibration,edge,slightly more cluttered and harder to read than example images
+BDD02,calibration,ambiguity,urban road scene with multiple competing objects; good disagreement trigger without duplicate GTS use
+GTS12,calibration,ambiguity,uncertain border/visibility decision; good for disagreement check
+GTS13,calibration,edge,less obvious than the clear examples; useful calibration case
+GTS15,calibration,edge,more visual noise and less obvious sign boundaries
+GTS18,calibration,critical,harder case that tests rule clarity under uncertainty
+GTS24,calibration,critical,challenging scene useful for disagreement tracking
+BDD12,calibration,critical,low-contrast city scene with clutter and partial visibility; better hidden-road variant for calibration
+BDD07,blind,normal,clean BDD highway scene; gives the required normal blind sample without reusing GTS
+BDD08,blind,edge,slightly cluttered highway scene; suitable hidden edge-case evaluation
+BDD18,blind,edge,night urban scene with reduced visibility and competing road cues; good hidden edge case
+BDD22,blind,critical,dawn/dusk highway scene with weak contrast and ambiguous object boundaries; strong critical blind case
+BDD26,blind,ambiguity,ambiguous night city scene with multiple possible road elements; satisfies the required ambiguity blind tag
