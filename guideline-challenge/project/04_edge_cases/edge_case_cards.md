@@ -1,316 +1,187 @@
-# EDGE CASE CARDS — CÁC TRƯỜNG HỢP ĐẶC BIỆT
+# EDGE CASE CARDS — INTERNAL OWNER REFERENCE
 
-**Version:** v1
+**Version:** v2
 
-Mục đích của file này là ghi lại các trường hợp mà **hai annotator hợp lý có thể đưa ra hai cách gán nhãn khác nhau**.
+Internal gold-owner material. Do not include these cards in the peer blind pack. `Sample` stays `chưa gán` until the owner selects an actual image and reviews it at full resolution. The active sample pack uses still images from GTSDB and BDD100K; LISA is out of scope.
 
-Mỗi edge case mới phát hiện trong quá trình annotation phải được bổ sung vào file này.
-
----
-
-## EC-001 — Biển báo bị cây/cành che
-
-### Tình huống
-
-Một phần biển báo bị lá hoặc cành cây che.
-
-### Có thể xảy ra khác biệt
-
-- Annotator A vẽ theo kích thước ước lượng của toàn bộ biển.
-- Annotator B chỉ vẽ phần nhìn thấy.
-
-### Quyết định
-
-Chỉ vẽ phần biển báo nhìn thấy được.
-
-```text
-visibility = partial
-```
-
-Nếu vẫn nhận dạng được:
-
-```text
-identification = known
-```
-
-Nếu không:
-
-```text
-identification = unknown
-sign_code = unknown
-```
+Each card describes a case that could produce reasonable annotation differences. Expected decisions follow the active v2 guideline and should be confirmed against the actual image before gold is frozen.
 
 ---
 
-## EC-002 — Biển báo bị xe che
-
-### Tình huống
-
-Xe che một phần biển báo.
-
-### Quyết định
-
-- Chỉ bounding box phần biển báo nhìn thấy.
-- Không đưa xe vào bounding box.
-
-```text
-visibility = partial
-```
+CASE ID: EC-001
+Sample: chưa gán
+Scene: Sign partly covered by foliage
+Observation: Leaves or branches hide part of a sign face.
+Decision: LABEL if the face is confirmed.
+Expected: One `traffic_sign` box around the visible face only. Set `visibility=partial`; use `identification=unknown` and `sign_code=unknown` when details cannot be identified.
+Rationale: Do not estimate hidden geometry.
+Common mistake: Expanding the box to an imagined full sign.
+Diversity: occlusion
 
 ---
 
-## EC-003 — Biển báo rất nhỏ ở xa
-
-### Tình huống
-
-Một vật thể nhỏ ở xa có hình dạng giống traffic sign.
-
-### Quyết định
-
-Nếu chắc chắn đó là traffic sign:
-
-```text
-class = traffic_sign
-visibility = low
-identification = unknown
-sign_code = unknown
-```
-
-Nếu không đủ bằng chứng để xác định đó là traffic sign:
-
-**Không annotate.**
-
-Nếu nhóm không thống nhất → `review_status = escalate`.
+CASE ID: EC-002
+Sample: chưa gán
+Scene: Sign partly covered by a vehicle
+Observation: A vehicle overlaps part of the sign.
+Decision: LABEL if the sign is confirmed.
+Expected: Box only the visible sign face, excluding the vehicle. Set `visibility=partial`.
+Rationale: The occluder is not part of the sign geometry.
+Common mistake: Including the vehicle or support in the box.
+Diversity: occlusion
 
 ---
 
-## EC-004 — Quảng cáo có hình giống biển báo
-
-### Tình huống
-
-Quảng cáo có hình tròn/tam giác và màu sắc giống traffic sign.
-
-### Quyết định
-
-Không annotate.
-
-Hình dạng tương tự không đủ để biến object thành traffic sign.
+CASE ID: EC-003
+Sample: chưa gán
+Scene: Small distant sign-like object
+Observation: A small object in the background may be a sign or another road object.
+Decision: LABEL if confirmed; IGNORE if evidence is insufficient; use image-level UNCERTAIN if the image contains an unresolved candidate.
+Expected: If confirmed, draw a box on the visible face and set `visibility=low`; unknown details use the relevant `unknown` attribute. Do not create a speculative box.
+Rationale: Avoid both missed signs and false positives.
+Common mistake: Inferring a sign from a circle or triangle alone.
+Diversity: small_far
 
 ---
 
-## EC-005 — Nhiều biển báo trên cùng một cột
-
-### Tình huống
-
-Có nhiều biển báo xếp dọc trên cùng một cột.
-
-### Quyết định
-
-Mỗi biển báo là một instance riêng.
-
-```text
-traffic_sign #1
-traffic_sign #2
-traffic_sign #3
-```
-
-Không gộp thành một bounding box.
+CASE ID: EC-004
+Sample: chưa gán
+Scene: Advertisement that resembles a traffic sign
+Observation: An advertisement uses a familiar shape or color.
+Decision: IGNORE.
+Expected: No `traffic_sign` box; use `image_status.status=contains_sign` only if another in-scope sign is present, otherwise `no_sign` after checking the full image.
+Rationale: Appearance alone does not establish traffic-sign function.
+Common mistake: Labeling by color/shape without traffic context or sign evidence.
+Diversity: negative
 
 ---
 
-## EC-006 — Biển phụ
-
-### Tình huống
-
-Có một supplementary sign/plate bên dưới biển chính.
-
-### Quyết định
-
-Thực hiện theo ontology của project.
-
-Không tự ý gộp hoặc tách nếu ontology chưa quy định.
-
-Nếu gặp trường hợp chưa có trong guideline:
-
-```text
-review_status = escalate
-```
-
-và bổ sung quyết định vào file này sau khi thống nhất.
+CASE ID: EC-005
+Sample: chưa gán
+Scene: Several sign faces on one pole
+Observation: Multiple physical faces are mounted together.
+Decision: LABEL each face separately.
+Expected: One `traffic_sign` instance per distinct visible face; do not merge the group or include the pole.
+Rationale: Each face is independently detected and classified.
+Common mistake: One box around the whole assembly.
+Diversity: conflict
 
 ---
 
-## EC-007 — Biển bị che gần như hoàn toàn
-
-### Tình huống
-
-Chỉ còn một phần rất nhỏ của biển báo nhìn thấy.
-
-### Quyết định
-
-Nếu vẫn xác định được đây là traffic sign:
-
-```text
-class = traffic_sign
-visibility = severely_occluded
-identification = unknown
-sign_code = unknown
-```
-
-Nếu thậm chí không chắc đây có phải traffic sign:
-
-Không annotate hoặc escalate nếu cần review.
+CASE ID: EC-006
+Sample: chưa gán
+Scene: Supplementary plate below a main sign
+Observation: A separate plate adds a condition or restriction.
+Decision: LABEL each distinct face separately when it is a traffic sign directed to road users.
+Expected: A separate instance with `sign_family=supplementary` when supported; otherwise use `unknown` rather than merging it into the main sign.
+Rationale: The ontology represents family as an attribute, not a combined object.
+Common mistake: Merging two faces or guessing the plate's code.
+Diversity: ambiguity
 
 ---
 
-## EC-008 — Biển bị cắt bởi mép ảnh
-
-### Tình huống
-
-Một phần biển báo nằm ngoài ảnh.
-
-### Quyết định
-
-Vẽ bounding box theo phần nhìn thấy trong ảnh.
-
-Không kéo bounding box ra ngoài ảnh.
-
-```text
-visibility = partial
-```
+CASE ID: EC-007
+Sample: chưa gán
+Scene: Sign almost completely occluded
+Observation: Only a small portion remains visible.
+Decision: LABEL only if the visible evidence confirms a sign; otherwise do not create a speculative box and escalate the image-level uncertainty.
+Expected: For a confirmed sign use a visible-only box, `visibility=severely_occluded`, and unknown identification/code as needed.
+Rationale: A real sign should not be dropped merely because its code is unreadable, but uncertain objects must not become false positives.
+Common mistake: Guessing the code or labeling an unconfirmed fragment.
+Diversity: critical
 
 ---
 
-## EC-009 — Góc nhìn nghiêng
-
-### Tình huống
-
-Biển báo được chụp từ góc nghiêng mạnh.
-
-### Quyết định
-
-Vẽ theo phần biển báo thực tế nhìn thấy.
-
-Không biến nó thành hình chữ nhật chính diện tưởng tượng.
+CASE ID: EC-008
+Sample: chưa gán
+Scene: Sign cut by the image boundary
+Observation: Part of the face lies outside the frame.
+Decision: LABEL the visible portion if it is confirmed.
+Expected: Box stays inside the image and follows the visible face; set `visibility=partial`.
+Rationale: Annotation is visible geometry, not amodal reconstruction.
+Common mistake: Extending the box outside the image.
+Diversity: occlusion
 
 ---
 
-## EC-010 — Không xác định được loại biển
-
-### Tình huống
-
-Chắc chắn là traffic sign nhưng không thể xác định chính xác sign code.
-
-### Quyết định
-
-```text
-sign_code = unknown
-identification = unknown
-```
-
-Không đoán dựa trên context.
+CASE ID: EC-009
+Sample: chưa gán
+Scene: Sign viewed at a strong angle
+Observation: Perspective makes the face look skewed.
+Decision: LABEL.
+Expected: Rectangle follows the visible face in the image; do not mentally fronto-parallel rectify it.
+Rationale: Geometry must match the pixels.
+Common mistake: Enlarging or reshaping the box to represent an imagined frontal sign.
+Diversity: geometry
 
 ---
 
-## EC-011 — Cùng một biển báo qua nhiều frame
-
-### Tình huống
-
-Video có cùng một biển báo xuất hiện trong nhiều frame.
-
-### Quyết định
-
-Nếu task không dùng tracking:
-
-- Annotate từng frame.
-- Geometry phải phù hợp với frame hiện tại.
-- Cập nhật visibility theo từng frame.
-
-Không tự động copy sign code sang frame mà biển báo đã quá mờ/che khuất.
+CASE ID: EC-010
+Sample: chưa gán
+Scene: Confirmed sign with unreadable family or code
+Observation: The object is clearly a road-user sign, but its details cannot be read.
+Decision: LABEL and use UNKNOWN for only the unsupported fields.
+Expected: Keep the object box. Set `sign_code=unknown` when code is unreadable; set `sign_family=unknown` and `identification=unknown` only when those are also unsupported.
+Rationale: Detection and classification are separate decisions.
+Common mistake: Dropping a confirmed sign because the code is unknown.
+Diversity: ambiguity
 
 ---
 
-## EC-012 — Biển báo không chắc là của Đức
-
-### Tình huống
-
-Nhìn thấy traffic sign nhưng không xác định được hệ thống biển báo/quốc gia.
-
-### Quyết định
-
-Không gán một German `sign_code` chỉ dựa trên suy đoán.
-
-Nếu scope yêu cầu annotate traffic sign:
-
-```text
-class = traffic_sign
-sign_code = unknown
-identification = unknown
-review_status = escalate
-```
+CASE ID: EC-011
+Sample: chưa gán
+Scene: Repeated sign across video frames
+Observation: The current pack contains still images only.
+Decision: Not applicable to this task.
+Expected: Annotate each supplied image independently; do not create tracks or copy attributes across images.
+Rationale: The task has no temporal identity contract.
+Common mistake: Treating similar signs in different images as one track.
+Diversity: temporal
 
 ---
 
-## EC-013 — Hai annotator chọn hai sign code khác nhau
-
-### Tình huống
-
-Cả hai annotator đều xác định đúng là traffic sign nhưng không thống nhất sign code.
-
-### Quyết định
-
-Không chọn theo cảm tính hoặc majority nếu chưa có quy tắc.
-
-Đưa vào:
-
-```text
-review_status = escalate
-```
-
-Sau khi reviewer quyết định, cập nhật guideline/edge case nếu đây là tình huống có thể lặp lại.
+CASE ID: EC-012
+Sample: chưa gán
+Scene: Sign from a system without a known GTSDB code
+Observation: A sign is relevant to road users but no matching code exists in the project's GTSDB-based code reference.
+Decision: LABEL if the sign is in scope; do not fabricate a German code.
+Expected: Assign a supported family if possible; enter `sign_code=unknown` when no code mapping is supported; escalate if scope/family cannot be resolved.
+Rationale: The project targets driving-relevant signs and includes BDD100K scenes; absence of a GTSDB code is not evidence to ignore a real sign.
+Common mistake: Inventing or translating a code to fit the GTSDB scheme.
+Diversity: conflict
 
 ---
 
-## EC-014 — Vật thể bị mờ do chuyển động
-
-### Tình huống
-
-Biển báo bị motion blur nhưng vẫn có thể xác định là traffic sign.
-
-### Quyết định
-
-Nếu geometry còn đủ rõ:
-
-```text
-class = traffic_sign
-visibility = low
-```
-
-Nếu sign code không thể xác định:
-
-```text
-sign_code = unknown
-identification = unknown
-```
+CASE ID: EC-013
+Sample: chưa gán
+Scene: Annotators propose different sign codes
+Observation: The sign is confirmed but code interpretations differ.
+Decision: Use `sign_code=unknown` if the visible evidence does not resolve the code; escalate if an owner decision is needed.
+Expected: Do not decide by majority or confidence alone. Record the evidence and update the guide if the ambiguity reveals a missing rule.
+Rationale: Disagreement is evidence to diagnose, not proof that an annotator is wrong.
+Common mistake: Copying the most confident annotator's code without evidence.
+Diversity: conflict
 
 ---
 
-## EC-015 — Không chắc có nên annotate hay không
+CASE ID: EC-014
+Sample: chưa gán
+Scene: Motion blur or low contrast
+Observation: The face is blurred but may still be identifiable as a sign.
+Decision: LABEL if confirmed and boxable.
+Expected: Use `visibility=low`; use unknown identification/code where details are not supported. If sign presence itself is uncertain, use `image_status.status=uncertain` and do not draw a speculative box.
+Rationale: Reduced legibility does not automatically mean the object is out of scope.
+Common mistake: Guessing from context or dropping a confirmed sign.
+Diversity: low_visibility
 
-### Tình huống
+---
 
-Annotator không thể quyết định object có đủ bằng chứng để được coi là traffic sign.
-
-### Quyết định
-
-Không tự đoán.
-
-Nếu object không thể được xác định đáng tin cậy → không annotate.
-
-Nếu cần quyết định thống nhất cho dataset →:
-
-```text
-review_status = escalate
-```
-
-và thêm kết luận cuối cùng vào edge-case cards.
+CASE ID: EC-015
+Sample: chưa gán
+Scene: Cannot decide whether the candidate is an in-scope sign
+Observation: Available pixels do not establish sign identity or road-user function.
+Decision: ESCALATE at image level if a decision is needed.
+Expected: Do not create a speculative box. Add the `image_status` tag with `status=uncertain`; record the question and evidence for review.
+Rationale: The schema has no image-level review attribute; `image_status.status=uncertain` is the visible export decision.
+Common mistake: Setting `review_status=escalate` without an object, or silently treating the image as `no_sign`.
+Diversity: escalation

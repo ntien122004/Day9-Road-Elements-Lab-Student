@@ -1,29 +1,29 @@
 CVAT task reference
 
-CVAT version:
-- Local CVAT checked at `http://localhost:8080`: 2.75.1.
-- Version used by teammates on their own machines is not recorded in the ZIP exports.
+CVAT local checked: 2.75.1 at `http://localhost:8080`.
 
-Calibration tasks:
-- Calibration was run independently by five annotators using the same 8-image calibration split.
-- Task names and CVAT IDs are not recoverable from the submitted exports; record them from each annotator's CVAT Tasks page if required.
-- Guideline used for calibration: v1, preserved as `project/02_guideline_v1_calibration.md`.
+Existing GTSDB task (historical; do not use for the new blind pack):
+- Project: `Day9 - GTS traffic sign`, project ID 6 (`http://localhost:8080/projects/6`).
+- Task: `gtsdb-v1`, task ID 29 (`http://localhost:8080/tasks/29`).
+- Annotation job ID 30; owner `bancie`; 28 images `GTS01.png`–`GTS28.png`; Shape mode.
+- Project Guide ID 2 contained guideline v1. The task uses the older GTSDB schema and does not include the new BDD sample pack. Do not use the older task for blind handoff.
 
-Final task under guideline v3:
-- Not created yet. Current gate status shows team details are still missing at G1, gold is not frozen at G4, and there is no peer export at G5. The active guideline is v2, so a v3 task should be created only after blind-test revision.
+Calibration:
+- Five annotator exports are stored under `project/06_calibration_exports/`:
+  - `dangvannam.zip`
+  - `dohoangminh.zip`
+  - `NguyenChiBang_Lab9.zip`
+  - `nguyendonquoctuan_lab09.zip`
+  - `nguyenviettien.zip`
+- The exports do not expose each independently created CVAT task name or ID in the metadata checked.
+- Calibration images are the eight `calibration` rows in `project/sample_pack.csv`.
+- The guideline used for calibration is preserved as `project/02_guideline_v1_calibration.md`.
+- Generated evidence: `project/06_calibration_measure.csv` and `project/06_calibration_report.csv`.
 
-Calibration exports in this repository:
-- `project/06_calibration_exports/dangvannam.zip`
-- `project/06_calibration_exports/dohoangminh.zip`
-- `project/06_calibration_exports/NguyenChiBang_Lab9.zip`
-- `project/06_calibration_exports/nguyendonquoctuan_lab09.zip`
-- `project/06_calibration_exports/nguyenviettien.zip`
+New sample-pack task / final v3 task:
+- Not yet recorded. The active guideline is v2; the blind gold is not frozen and no peer export has been received.
+- After gold freeze, create the blind task with the frozen `03_cvat_labels.json` and the guideline version required for the handoff. Record its CVAT project/task/job IDs and export path here.
 
-Related generated evidence:
-- `project/06_calibration_measure.csv`
-- `project/06_calibration_report.csv`
-
-Notes for the recipient:
-- Exports contain CVAT annotations but do not identify a task name/ID in the metadata checked.
-- Local CVAT version is verified; do not assume the other annotators used the same version unless they confirm it.
-- Before final v3 task setup, freeze the reviewed blind gold once, then use the frozen labels and v3 guideline consistently.
+Recipient notes:
+- Use the current sample pack and labels JSON, not the historical `gtsdb-v1` task.
+- The local CVAT version is verified; versions on other annotators' machines are not confirmed.

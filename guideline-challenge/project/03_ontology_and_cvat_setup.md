@@ -1,139 +1,39 @@
 # ONTOLOGY VÀ CẤU HÌNH CVAT
 
-**Version:** v1
+**Version:** v2
 
-## 1. Object Classes
+Ontology này khớp với `03_cvat_labels.json`. Task dùng ảnh tĩnh GTSDB/BDD100K, Shape mode và không dùng Track. Mọi attribute đều không mutable.
 
-| Name | Geometry | Class / Attribute | Giá trị | Default | Mutable? | Lý do |
+## 1. Classes và attributes
+
+| Name | Geometry | Type | Allowed values | Default trong CVAT | Mutable? | Lý do |
 |---|---|---|---|---|---|---|
-| `traffic_sign` | Bounding Box | Class | `traffic_sign` | `traffic_sign` | No | Tất cả traffic sign dùng chung object class |
+| `traffic_sign` | rectangle | class | — | — | No | Mỗi mặt biển hướng tới người đi đường là một instance. |
+| `sign_family` | — | attribute của `traffic_sign` | warning, regulatory, prohibitory, mandatory, priority, information, direction, temporary, supplementary, other, unknown | `__undefined__` | No | Phân nhóm biển; chọn `unknown` khi đã xác nhận biển nhưng thiếu bằng chứng phân loại. |
+| `sign_code` | — | attribute của `traffic_sign` | text; mã GTSDB theo `Zeichen <mã>` hoặc `unknown` | `__undefined__` | No | Ghi mã biển khi có bằng chứng; không đoán. Biển không có mã tương ứng dùng `unknown`. |
+| `visibility` | — | attribute của `traffic_sign` | full, partial, low, severely_occluded | `__undefined__` | No | Mức độ nhìn thấy mặt biển trong ảnh tĩnh. |
+| `identification` | — | attribute của `traffic_sign` | known, unknown | `__undefined__` | No | Tách việc xác nhận object là biển khỏi việc nhận dạng loại/mã. |
+| `review_status` | — | attribute của `traffic_sign` | normal, escalate | `__undefined__` | No | Ghi nhận object cần người review; không thay thế giá trị unknown. |
+| `image_status` | tag | attribute `status` cấp ảnh | contains_sign, no_sign, uncertain | `__undefined__` | No | Trạng thái cả ảnh; dùng tag thay vì box giả khi ảnh không có biển hoặc candidate chưa xác nhận. |
 
----
+`__undefined__` là trạng thái chưa chọn, không phải đáp án. Annotator phải chọn giá trị có chủ đích cho các attribute cần thiết và không để `__undefined__` trong export hoàn tất.
 
-## 2. Attributes
+## 2. LABEL / IGNORE / UNKNOWN / ESCALATE
 
-| Name | Geometry | Class / Attribute | Allowed Values | Default | Mutable? | Lý do |
-|---|---|---|---|---|---|---|
-| `sign_family` | N/A | Attribute | warning, regulatory, prohibitory, mandatory, priority, information, direction, temporary, supplementary, other, unknown | unknown | Yes | Nhóm của biển báo |
-| `sign_code` | N/A | Attribute | Mã biển báo Đức hoặc unknown | unknown | Yes | Nhận dạng chính xác mà không tạo hàng trăm class |
-| `visibility` | N/A | Attribute | full, partial, low, severely_occluded | full | Yes | Mức độ nhìn thấy có thể thay đổi theo frame |
-| `identification` | N/A | Attribute | known, unknown | unknown | Yes | Tách việc phát hiện object khỏi việc nhận dạng |
-| `review_status` | N/A | Attribute | normal, escalate | normal | Yes | Ghi nhận trường hợp cần review |
+- **LABEL:** tạo rectangle `traffic_sign` cho từng mặt biển trong scope đủ bằng chứng để xác nhận và định vị.
+- **IGNORE:** không tạo box cho quảng cáo, logo, road marking, sticker, biển cửa hàng hoặc vật thể không đủ bằng chứng là biển trong scope.
+- **UNKNOWN:** với biển đã xác nhận nhưng không nhận dạng được, dùng `sign_family=unknown`, `identification=unknown` và/hoặc `sign_code=unknown` tùy thông tin còn thiếu.
+- **ESCALATE:** object đã xác nhận cần phân xử thì đặt `review_status=escalate`; candidate cấp ảnh chưa thể xác nhận thì gắn tag `image_status`, chọn `status=uncertain`.
 
----
+## 3. CVAT đã xác minh
 
-## 3. Image-level Attribute
+- **CVAT local:** 2.75.1 tại `http://localhost:8080`.
+- **Project:** `Day9 - GTS traffic sign`, project ID 6.
+- **Task GTSDB cũ:** `gtsdb-v1`, task ID 29; job annotation ID 30; owner `bancie`; 28 ảnh GTSDB; Shape mode. Đây là task cũ, không phải task calibration mới của sample pack.
+- **Guide cũ:** project Guide ID 2 từng dùng guideline v1. Task GTSDB cũ dùng schema trước sample pack; không dùng task cũ cho blind handoff.
+- **Task calibration:** exports đã có từ năm annotator nhưng task names/IDs riêng không được lưu trong ZIP metadata đã kiểm tra.
+- **Task blind/final:** chưa tạo; cần gold freeze và handoff trước.
 
-| Name | Allowed Values | Default | Ý nghĩa |
-|---|---|---|---|
-| `image_status` | contains_sign, no_sign, uncertain | contains_sign | Ghi nhận ảnh có/không có traffic sign |
+## 4. Kiểm tra export
 
-### Lưu ý
-
-Nếu ảnh không có biển báo:
-
-```text
-image_status = no_sign
-```
-
-Không tạo bounding box giả.
-
----
-
-## 4. LABEL / IGNORE / UNKNOWN / ESCALATE
-
-### LABEL
-
-Tạo object:
-
-```text
-class = traffic_sign
-```
-
-khi object có đủ bằng chứng để xác định là traffic sign và có thể định vị bằng bounding box.
-
-### IGNORE
-
-Không tạo annotation cho:
-
-- quảng cáo;
-- logo;
-- road marking;
-- sticker;
-- vật thể không phải traffic sign;
-- vật thể không đủ bằng chứng để xác định là traffic sign.
-
-**Việc không tạo annotation chính là cách thể hiện IGNORE trong CVAT.**
-
-### UNKNOWN
-
-Nếu chắc chắn object là traffic sign nhưng không xác định được loại:
-
-```text
-sign_family = unknown
-sign_code = unknown
-identification = unknown
-```
-
-### ESCALATE
-
-Nếu cần người review:
-
-```text
-review_status = escalate
-```
-
-Không được dùng một quyết định chỉ tồn tại trong trao đổi miệng mà không thể thấy trong CVAT/export.
-
----
-
-## 5. Class hay Attribute?
-
-### Dùng CLASS khi:
-
-1. Object có bản chất khác nhau rõ rệt.
-2. Downstream cần phân loại trực tiếp.
-3. Geometry hoặc QA rule khác nhau.
-
-### Dùng ATTRIBUTE khi:
-
-1. Nó mô tả thuộc tính của cùng một object.
-2. Giá trị có thể thay đổi giữa các frame.
-3. Tách thành class sẽ tạo ra quá nhiều tổ hợp.
-
-### Áp dụng cho project
-
-| Thành phần | Loại | Lý do |
-|---|---|---|
-| `traffic_sign` | Class | Object chính cần detect |
-| `sign_family` | Attribute | Thuộc tính của traffic sign |
-| `sign_code` | Attribute | Nhận dạng cụ thể của traffic sign |
-| `visibility` | Attribute | Có thể thay đổi theo frame |
-| `identification` | Attribute | Trạng thái nhận dạng |
-| `review_status` | Attribute | Trạng thái QA/review |
-
-Không tạo class kiểu:
-
-```text
-small_speed_limit
-occluded_speed_limit
-unknown_speed_limit
-temporary_speed_limit
-```
-
----
-
-## 6. Yêu cầu đối với CVAT Export
-
-Export phải giữ lại được:
-
-- Class.
-- Bounding-box coordinates.
-- `sign_family`.
-- `sign_code`.
-- `visibility`.
-- `identification`.
-- `review_status`.
-- `image_status` nếu project dùng image-level attributes.
-
-Nếu một quyết định không thể khôi phục từ annotation/export thì quyết định đó không được dùng làm quy tắc chấm annotation.
+Export CVAT cần giữ label, tọa độ rectangle, attributes `sign_family`, `sign_code`, `visibility`, `identification`, `review_status` và tag ảnh `image_status.status`. Nếu quyết định không thể đọc lại từ export thì không dùng làm tiêu chí chấm.

@@ -38,5 +38,5 @@ chấm như giá trị tường minh; `escalate` phải thể hiện bằng attr
 ## Dữ liệu và giới hạn
 
 Sample pack hiện có 18 ảnh: 11 GTSDB và 7 BDD100K; 5 ảnh blind đều là BDD100K và không trùng sample ID với
-example/calibration. Bộ nhỏ, nguồn GTSDB là biển Đức còn BDD100K là cảnh đường bộ rộng hơn; kết quả không đại diện
-cho mọi quốc gia, điều kiện đường hoặc hiệu năng triển khai.
+example/calibration. Bộ nhỏ; GTSDB chủ yếu có biển Đức, BDD100K cung cấp các cảnh đường bộ đa dạng hơn. Kết quả
+không đại diện cho mọi quốc gia, điều kiện đường hoặc hiệu năng triển khai.
