@@ -1,17 +1,19 @@
 # Team
 
-Điền trước phút 15. Thay mọi placeholder; còn sót thì `make status` báo ở gate G1.
+Nhóm 1000. Năm thành viên. Nguyễn Việt Tiến là nhóm trưởng.
 
-- **Team:** TODO (ví dụ `team07`)
-- **Nhóm peer test bài của mình:** TODO (cặp A ↔ B; số nhóm lẻ thì ring 3 nhóm A → B → C → A — Lab Coach công bố)
-- **Nhóm mình test bài của:** TODO
-- **Problem family:** TODO (xem README mục "1 · Chọn bài toán")
-- **Nguồn ảnh:** TODO (`bdd100k`, `gtsdb`, `lisa` — chỉ dùng ảnh trong `data/`)
+- **Team:** 1000
+- **Nhóm peer test bài của mình:** chưa công bố (Lab Coach ghép cặp)
+- **Nhóm mình test bài của:** chưa công bố (Lab Coach ghép cặp)
+- **Problem family:** Traffic sign — sự ảnh hưởng của biển báo đối với việc điều khiển xe
+- **Nguồn ảnh:** `gtsdb`, `bdd100k` (không dùng `lisa`)
 
-| Thành viên | GitHub | Vai trò chính | File phụ trách |
-|---|---|---|---|
-| TODO | TODO | TODO | TODO |
+| Thành viên | Mã sinh viên | GitHub | Vai trò chính | File phụ trách |
+|---|---|---|---|---|
+| Nguyễn Việt Tiến | 2A202602315 | ntien122004 | nhóm trưởng | chưa chia |
+| Nguyễn Chí Bằng | 2A202602248 | bancie | thành viên | `01`, `02`, `03_*`, `sample_pack.csv`, `09` |
+| Đỗ Hoàng Minh | 2A202602303 | nicka-18 | thành viên | chưa chia |
+| Nguyễn Đôn Quốc Tuấn | 2A202602127 | Joycee23 | thành viên | chưa chia |
+| Đặng Văn Nam | 2A202602295 | nam-276 | thành viên | chưa chia |
 
-Gợi ý chia vai (nhóm 2–3 người thì gộp): **spec owner** (`01`, `02`), **CVAT owner** (`03_*`, `sample_pack.csv`,
-`09`), **gold owner** (`04_edge_cases/`), **QA owner** (`05`, `06`, `07_blind_handoff/`). Mỗi file một người sửa
-chính để tránh xung đột git. Calibration thì mọi người cùng label.
+Gợi ý chia vai còn lại (nhóm 5 người thì tách): **gold owner** (`04_edge_cases/`), **QA owner** (`05`, `06`, `07_blind_handoff/`). Mỗi file một người sửa chính để tránh xung đột git. Calibration thì mọi người cùng label.
